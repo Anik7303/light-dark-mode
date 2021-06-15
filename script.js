@@ -13,30 +13,38 @@ function imageMode(mode) {
     image3.src = `images/undraw_conceptual_idea_${mode}.svg`
 }
 
-// dark mode styles
-function darkMode() {
-    toggleIcon.children[0].textContent = 'Dark Mode'
-    toggleIcon.children[1].classList.replace('fa-sun', 'fa-moon')
-    imageMode('dark')
+// set theme
+function setLightOrDarkModeStyles(isLight = false) {
+    const replace = isLight ? 'fa-moon' : 'fa-sun'
+    const replaceBy = isLight ? 'fa-sun' : 'fa-moon'
+    toggleIcon.children[0].textContent = isLight ? 'Light Mode' : 'Dark Mode'
+    toggleIcon.children[1].classList.replace(replace, replaceBy)
+    imageMode(isLight ? 'light' : 'dark')
 }
 
-// light mode styles
-function lightMode() {
-    toggleIcon.children[0].textContent = 'Light Mode'
-    toggleIcon.children[1].classList.replace('fa-moon', 'fa-sun')
-    imageMode('light')
+// set attribute to dom
+function setAttributeToDOM(key, value) {
+    document.documentElement.setAttribute(key, value)
+}
+
+// save item to local storage
+function saveToLocalStorage(key, value) {
+    localStorage.setItem(key, value)
+}
+
+// set theme
+function setTheme(theme) {
+    setAttributeToDOM('data-theme', theme)
+    saveToLocalStorage('theme', theme)
+    setLightOrDarkModeStyles(theme === 'light')
 }
 
 // switch theme dynamically
 function switchTheme(event) {
     if (event.target.checked) {
-        document.documentElement.setAttribute('data-theme', 'dark')
-        localStorage.setItem('theme', 'dark')
-        darkMode()
+        setTheme('dark')
     } else {
-        document.documentElement.setAttribute('data-theme', 'light')
-        localStorage.setItem('theme', 'light')
-        lightMode()
+        setTheme('light')
     }
 }
 
@@ -45,9 +53,9 @@ toggleSwitch.addEventListener('change', switchTheme)
 
 // on load
 const currentTheme = localStorage.getItem('theme') || 'light'
-document.documentElement.setAttribute('data-theme', currentTheme)
+setAttributeToDOM('data-theme', currentTheme)
 
 if (currentTheme === 'dark') {
     toggleSwitch.checked = true
-    darkMode()
+    setLightOrDarkModeStyles()
 }
